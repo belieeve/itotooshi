@@ -42,6 +42,7 @@ function resizeCanvas() {
 function startGame(level) {
     currentLevel = level;
     levelSelectionContainer.style.display = 'none';
+    gameOverContainer.classList.add('hidden'); // Ensure game over is hidden before starting
     mainGameContainer.classList.remove('hidden');
     // We need to get the correct canvas size after it becomes visible
     requestAnimationFrame(() => {
@@ -114,7 +115,8 @@ function update() {
 
     // Score and wall cleanup
     walls = walls.filter(wall => {
-        if (wall.x + wallWidth * scale < player[player.length - 1].x && !wall.passed) {
+        // Check if the wall has passed the player's head
+        if (wall.x + wallWidth * scale < player[0].x && !wall.passed) {
             score++;
             scoreEl.textContent = score;
             wall.passed = true;
@@ -157,14 +159,35 @@ function draw() {
         }
         ctx.stroke();
     }
-    drawThread(1 * scale, '#CCCCCC');
-    drawThread(-1 * scale, '#FFFFFF');
+    drawThread(1 * scale, '#ffb3c6'); // Lighter Pink
+    drawThread(-1 * scale, '#ff85a2'); // Pink
 
     // Draw walls
-    ctx.fillStyle = '#ecf0f1';
+    ctx.fillStyle = '#fafafa'; // Softer white
+    const wallRadius = 10 * scale;
     walls.forEach(wall => {
-        ctx.fillRect(wall.x, 0, wallWidth * scale, wall.y);
-        ctx.fillRect(wall.x, wall.y + wallSettings.wallGap * scale, wallWidth * scale, canvas.height - (wall.y + wallSettings.wallGap * scale));
+        // Draw top part with rounded bottom corners
+        ctx.beginPath();
+        ctx.moveTo(wall.x, 0);
+        ctx.lineTo(wall.x, wall.y - wallRadius);
+        ctx.arcTo(wall.x, wall.y, wall.x + wallRadius, wall.y, wallRadius);
+        ctx.lineTo(wall.x + wallWidth * scale - wallRadius, wall.y);
+        ctx.arcTo(wall.x + wallWidth * scale, wall.y, wall.x + wallWidth * scale, wall.y - wallRadius, wallRadius);
+        ctx.lineTo(wall.x + wallWidth * scale, 0);
+        ctx.closePath();
+        ctx.fill();
+
+        // Draw bottom part with rounded top corners
+        const bottomY = wall.y + wallSettings.wallGap * scale;
+        ctx.beginPath();
+        ctx.moveTo(wall.x, canvas.height);
+        ctx.lineTo(wall.x, bottomY + wallRadius);
+        ctx.arcTo(wall.x, bottomY, wall.x + wallRadius, bottomY, wallRadius);
+        ctx.lineTo(wall.x + wallWidth * scale - wallRadius, bottomY);
+        ctx.arcTo(wall.x + wallWidth * scale, bottomY, wall.x + wallWidth * scale, bottomY + wallRadius, wallRadius);
+        ctx.lineTo(wall.x + wallWidth * scale, canvas.height);
+        ctx.closePath();
+        ctx.fill();
     });
 }
 
@@ -193,6 +216,7 @@ levelButtons.forEach(button => {
 restartButton.addEventListener('click', () => {
     // Hide game over screen and show level selection
     gameOverContainer.classList.add('hidden');
+    mainGameContainer.classList.add('hidden'); // Hide the main game container
     levelSelectionContainer.style.display = 'block';
 });
 
