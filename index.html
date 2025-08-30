@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>糸通しチャレンジ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <div id="level-selection-container">
+            <h1>糸通しチャレンジ</h1>
+            <h2>レベルを選択してください</h2>
+            <button class="level-button" data-level="easy">かんたん</button>
+            <button class="level-button" data-level="medium">ふつう</button>
+            <button class="level-button" data-level="hard">むずかしい</button>
+        </div>
+
+        <div id="main-game" class="hidden">
+            <div id="game-container">
+                <canvas id="game-canvas"></canvas> <!-- width and height will be set by JS -->
+                <div id="score-container">Score: <span id="score">0</span></div>
+                <div id="game-over-container" class="hidden">
+                    <h2>Game Over</h2>
+                    <p>Score: <span id="final-score">0</span></p>
+                    <button id="restart-button">もう一度遊ぶ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
